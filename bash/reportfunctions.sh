@@ -1,3 +1,5 @@
+#Define the variables for lsblk, dmidecode, lshw, lscpu
+
 lsblkOutput=$(lsblk)
 dmidecodeOutput=$(dmidecode)
 lshwOutput=$(lshw)
@@ -5,67 +7,89 @@ lscpuOutput=$(lscpu)
 
 
 ############################################# CPU INFORMATION ##################################################
-function cpuReport {
+function cpureport()  {
 
 	#Cmd to get the cpu manufacturer.
+#lshw command used with class "system" to filter cpu manufacuter
+#grep is used to get 'description' field, while awk is used to print the 2nd itme field
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
 	cpumanufac=$(echo "$lshwOutput" | grep 'Model name:' | sed 's/,"Model name: *//') 
-	if [ -z "$cmpdescription" ]; then 
+	if [ -z "$cpumanufac" ]; then   
 		cpumanufac='Error! Data is unavailable.'
 	else
 		cpumanufac=$(echo "$lscpuOutput" | grep 'Model name:' | sed 's/,"Model name: *//')
 	fi
 	#-----------------------------------------------------------------------------------------------
 	#Cmd to get the Cpu architecture.
+#lshw command used with class "system" to filter cpu architecture
+#grep is used to get 'description' field, while awk is used to print the 2nd itme field
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
 	cpuarchi=$(echo "$lscpuOutput" | grep 'Architecture: ' | awk '{print$2}')
-	if [ -z "$cmpdescription" ]; then 
+	if [ -z "$cpuarchi" ]; then  
 		cpuarchi='Error! Data is unavailable.'
 	else
 		cpuarchi=$(echo "$lscpuOutput" | grep 'Architecture: ' | awk '{print$2}')
 	fi
 	#-----------------------------------------------------------------------------------------------
 	#Cmd to get the Cpu core count.
+#lshw command used with class "system" to filter cpu core count
+#grep is used to get 'description' field, while awk is used to print the 2nd itme field
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
 	cpucore=$(echo "$lscpuOutput" | grep 'CPU(s): ' | head -1 | awk '{print$2}')
-	if [ -z "$cmpdescription" ]; then 
+	if [ -z "$cpucore" ]; then
 		cpucore='Error! Data is unavailable.'
 	else
 		cpucore=$(echo "$lscpuOutput" | grep 'CPU(s): ' | head -1 | awk '{print$2}')
 	fi
 	#-----------------------------------------------------------------------------------------------
 	#Cmd to get the Cpu maximum speed.
+#lshw command used with class "system" to filter cpu maximun speed
+#grep is used to get 'description' field, while awk is used to print the 2nd itme field
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
 	cpuspeed=$(echo "$lshwOutput" -class cpu | grep 'capacity: ' | head -1 | awk '{print$2}')
-	if [ -z "$cmpdescription" ]; then 
+	if [ -z "$cpuspeed" ]; then 
 		cpuspeed='Error! Data is unavailable.'
 	else
 		cpuspeed=$(echo "$lshwOutput" -class cpu | grep 'capacity: ' | head -1 | awk '{print$2}')
 	fi
 	#-----------------------------------------------------------------------------------------------
 	#Cmd to get the size of L1d.
+#lscpu command used with class "system" to filter size of Ltd.
+#grep is used to get 'description' field, while awk is used to print the 2nd itme field
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
 	sizeL1d=$(echo "$lscpuOutput" | grep 'L1d ' | awk '{print $3}')
-	if [ -z "$cmpdescription" ]; then 
+	if [ -z "$sizeL1d" ]; then
 		sizeL1d='Error! Data is unavailable.'
 	else
 		sizeL1d=$(echo "$lscpuOutput" | grep 'L1d ' | awk '{print $3}')
 	fi
 	#-----------------------------------------------------------------------------------------------
 	#Cmd to get the size of L1i.
+#lscpu command used with class "system" to filter size of L1i
+#grep is used to get 'description' field, while awk is used to print the 2nd itme field
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
 	sizeL1i=$(echo "$lscpuOutput" | grep 'L1i ' | awk '{print $3}')
-	if [ -z "$cmpdescription" ]; then 
+	if [ -z "$sizeL1i" ]; then 
 		sizeL1i='Error! Data is unavailable.'
 	else
 		sizeL1i=$(echo "$lscpuOutput" | grep 'L1i ' | awk '{print $3}')
 	fi
 	#-----------------------------------------------------------------------------------------------
 	#Cmd to get the size of L2.
+#grep is used to get 'description' field, while awk is used to print the 2nd itme field
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
+	
 	sizeL2=$(echo "$lscpuOutput" | grep 'L2' | awk '{print $3}')
-	if [ -z "$cmpdescription" ]; then 
-		sizeL2='Error! Data is unavailable.'
+	if [ -z "$sizeL2" ]; then 
 	else
 		sizeL2=$(echo "$lscpuOutput" | grep 'L2 ' | awk '{print $3}')
 	fi
 	#-----------------------------------------------------------------------------------------------
 	#Cmd to get the size of L3.
+#grep is used to get 'description' field, while awk is used to print the 2nd itme field
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
 	sizeL3=$(echo "$lscpuOutput" | grep 'L3' | awk '{print $3}')
-	if [ -z "$cmpdescription" ]; then 
+	if [ -z "$sizeL3" ]; then 
 		sizeL3='Error! Data is unavailable.'
 	else
 		sizeL3=$(echo "$lscpuOutput" | grep 'L3 ' | awk '{print $3}')
@@ -74,19 +98,32 @@ function cpuReport {
 cat <<-EOF
 	
 ------ CPU INFORMATION------
+
 CPU manufacturer and model=$cpumanufac
+
 CPU architecture=              $cpuarchi
+
 CPU core count=                $cpucore
+
 CPU maximum speed=             $cpuspeed
+
 Size of caches (L1d)=          $sizeL1d
+
 Size of caches (L1i)=          $sizeL1i
+
 Size of caches (L2)=           $sizeL2
+
 Size of caches (L3)=           $sizeL3
+
 EOF
 }
 
 ################################################## Network Report ##################################################
-function networkReport() {
+
+#Create a function for network report
+function networkreport() {
+
+#Display model description
 	interfaceDescription=$(lshw -C network | grep -i 'description:' | awk '{print $1, $2, $3}')
 	if [ -z "$interfaceDescription" ]; then 
 		interfaceDescription='Error! Data is unavailable.'
@@ -94,6 +131,7 @@ function networkReport() {
 		interfaceDescription=$(lshw -C network | grep -i 'description:' | awk '{print $1, $2, $3}')
 	fi
 
+#Display interfaceManu
 	interfaceManu=$(lshw -C network | grep -i 'vendor:' | awk '{print $2, $3}')
 	if [ -z "$interfaceManu" ]; then 
 		interfaceManu='Error! Data is unavailable.'
@@ -101,6 +139,8 @@ function networkReport() {
 		interfaceManu=$(lshw -C network | grep -i 'vendor:' | awk '{print $2, $3}')
 	fi
 
+#Display interface interspeed
+#-z test command is used to check if the data is available or not by testing the variable and checking if it's empty or not. If empty an error is displayed
 	interSpeed=$(ethtool ens33 | grep 'Speed:' | awk '{print $2}')
 	if [ -z "$interSpeed" ]; then 
 		interSpeed='Error! Data is unavailable.'
@@ -108,12 +148,15 @@ function networkReport() {
 		interSpeed=$(ethtool ens33 | grep 'Speed:' | awk '{print $2}')
 	fi
 
+#Cmd to get the interIpAdd
 	interIpAdd=$(ip -4 addr show | awk '/inet /{print $2}')
 	if [ -z "$interIpAdd" ]; then 
 		interIpAdd='Error! Data is unavailable.'
 	else
 		interIpAdd=$(ip -4 addr show | awk '/inet /{print $2}')
 	fi
+
+#Cmd to get the interBridgeMaster
 
 	interBridgeMaster=$(sudo brctl show | awk 'NR > 1 {print $1, $4}')
 	if [ -z "$interBridgeMaster" ]; then 
@@ -122,12 +165,16 @@ function networkReport() {
 		interBridgeMaster=$(sudo brctl show | awk 'NR > 1 {print $1, $4}')
 	fi
 
+#Cmd to get the DNSserver
+ 
 	DNSserver=$(cat /etc/resolv.conf | grep "nameserver" | awk '{print $2}')
 	if [ -z "$DNSserver" ]; then 
 		DNSserver='N/A'
 	else
 		DNSserver=$(cat /etc/resolv.conf | grep "nameserver" | awk '{print $2}')
 	fi
+
+#Cmd to get the searchDomain
 
 	searchDomain=$(cat /etc/resolv.conf | grep "search" | awk 'NR == 2 {print $2}')
 	if [ -z "$searchDomain" ]; then 
@@ -150,35 +197,42 @@ EOF
 
 ########################################################## Storage Information ##############################################################
 
-function storageReport() {
+#Create a function for storage information
+function diskreport() {
+
+#Cmd to get the manufacture
 	driveManufacturer0=$(echo "$lshwOutput" | grep -A10 '\*\-disk' | grep 'vendor:' | awk '{$1=""; print $0}')
 	if [ -z "$driveManufacturer0" ]; then 
 		driveManufacturer0='Error! Data is unavailable.'
 	else
 		driveManufacturer0=$(echo "$lshwOutput" | grep -A10 '\*\-disk' | grep 'vendor:' | awk '{$1=""; print $0}')
 	fi
-
-	drivevendor1=$(echo "$lshwOutput" | grep -m1 -A8 "\-volume:0" | grep 'vendor:' | awk '{$1=""; print $0}')
+	
+#Cmd to get the drivevendor1
+        drivevendor1=$(echo "$lshwOutput" | grep -m1 -A8 "\-volume:0" | grep 'vendor:' | awk '{$1=""; print $0}')
 	if [ -z "$drivevendor1" ]; then 
 		drivevendor1='Error! Data is unavailable.'
 	else
 		drivevendor1=$(echo "$lshwOutput" | grep -m1 -A8 "\-volume:0" | grep 'vendor:' | awk '{$1=""; print $0}')
 	fi
-
+	
+#Cmd to get drivevendor2
 	drivevendor2=$(echo "$lshwOutput" | grep -m1 -A8 "\-volume:1" | grep 'vendor:' | awk '{$1=""; print $0}')
 	if [ -z "$drivevendor1" ]; then 
 		drivevendor2='Error! Data is unavailable.'
 	else
 		drivevendor2=$(echo "$lshwOutput" | grep -m1 -A8 "\-volume:1" | grep 'vendor:' | awk '{$1=""; print $0}')
 	fi
-
+	
+#Cmd to get the drivendor3
 	drivevendor3=$(echo "$lshwOutput" | grep -m1 -A8 "\-volume:2" | grep 'vendor:' | awk '{$1=""; print $0}')
 	if [ -z "$drivevendor3" ]; then 
 		drivevendor3='Error! Data is unavailable.'
 	else
 		drivevendor3=$(echo "$lshwOutput" | grep -m1 -A8 "\-volume:2" | grep 'vendor:' | awk '{$1=""; print $0}')
 	fi
-
+	
+#Cmd to get the drivemodel
 	driveModel=$(echo "$lshwOutput" | grep -m1 -A10 "\-disk" | grep 'product:' | awk '{$1=""; print $0}')
 	if [ -z "$driveModel" ]; then 
 		driveModel='Error! Data is unavailable.'
@@ -186,13 +240,15 @@ function storageReport() {
 		driveModel=$(echo "$lshwOutput" | grep -m1 -A10 "\-disk" | grep 'product:' | awk '{$1=""; print $0}')
 	fi
 
+#Cmd to get the drivesize0
 	driveSize0=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==1 {print $4"B"}')
 	if [ -z "$driveSize0" ]; then 
 		driveSize0='Error! Data is unavailable.'
 	else
 		driveSize0=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==1 {print $4"B"}')
 	fi
-
+	
+#Cmd to get the drivesize1
 	driveSize1=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==2 {print $4"B"}')
 	if [ -z "$driveSize1" ]; then 
 		driveSize1='Error! Data is unavailable.'
@@ -200,6 +256,7 @@ function storageReport() {
 		driveSize1=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==2 {print $4"B"}')
 	fi
 
+#Cmd to get the drivesize2
 	driveSize2=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==3 {print $4"B"}')
 	if [ -z "$driveSize2" ]; then 
 		driveSize2='Error! Data is unavailable.'
@@ -207,6 +264,7 @@ function storageReport() {
 		driveSize2=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==3 {print $4"B"}')
 	fi
 
+#Cmd to get the drivesize3
 	driveSize3=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==4 {print $4"B"}')
 	if [ -z "$driveSize3" ]; then 
 		driveSize3='Error! Data is unavailable.'
@@ -214,6 +272,7 @@ function storageReport() {
 		driveSize3=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==4 {print $4"B"}')
 	fi
 
+#Cmd to get the driveparition0, 1, 2, 3
 	drivePartition0=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==1 {print $1}')
 	if [ -z "$drivePartition0" ]; then 
 		drivePartition0='Error! Data is unavailable.'
@@ -242,6 +301,7 @@ function storageReport() {
 	drivePartition3=$(echo "$lsblkOutput" | grep "sda3" | awk 'FNR==1 {print $1}' | tail -c 5)
 	fi
 
+#Cmd to get the drivemountpoint0, 1,2,3,
 	driveMountPoint0=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==1 {print $7}')
 	if [ -z "$driveMountPoint0" ]; then 
 		driveMountPoint0='Error! Data is unavailable.'
@@ -270,6 +330,7 @@ function storageReport() {
 		driveMountPoint3=$(echo "$lsblkOutput" | grep "sda" | awk 'FNR==4 {print $7}')
 	fi
 
+##Cmd to get the drivefilesystemssizeSDA2,SDA3
 	driveFilesystemSizeSDA2=$(echo "$lsblkOutput" | grep "sda2" | awk '{print $2"B"}')
 	if [ -z "$driveFilesystemSizeSDA2" ]; then 
 		driveFilesystemSizeSDA2='Error! Data is unavailable.'
@@ -312,7 +373,10 @@ EOF
 	
 ####################### RAM INFORMATION ##############################
 
-function ramReport() {
+#create a function for ram information
+function ramreport() {
+
+#Cmd to get the RAMAMNUFACTURE
 	ramManufacturer=$(echo "$dmidecodeOutput" | grep -m1 -i "manufacturer" | awk '{$1=""; print $0}')
 	if [ -z "$ramManufacturer" ]; then 
 		ramManufacturer='Error! Data is unavailable.'
@@ -320,6 +384,7 @@ function ramReport() {
 		ramManufacturer=$(echo "$dmidecodeOutput" | grep -m1 -i "manufacturer" | awk '{$1=""; print $0}')
 	fi
 
+#Cmd to get the ramproduct name
 	ramProductName=$(echo "$dmidecodeOutput" | grep -m1 -i "Product name" | awk '{$1=""; $2=""; print $0}')
 	if [ -z "$ramProductName" ]; then 
 		ramProductName='Error! Data is unavailable.'
@@ -327,6 +392,7 @@ function ramReport() {
 		ramProductName=$(echo "$dmidecodeOutput" | grep -m1 -i "Product name" | awk '{$1=""; $2=""; print $0}')
 	fi
 
+#Cmd to get the ramserialnumber
 	ramSerialNum=$(echo "$dmidecodeOutput" | grep -m1 -i "serial number" | awk '{$1=""; print $0}')
 	if [ -z "$ramSerialNum" ]; then 
 		ramSerialNum='Error! Data is unavailable.'
@@ -334,6 +400,7 @@ function ramReport() {
 		ramSerialNum=$(echo "$dmidecodeOutput" | grep -m1 -i "serial number" | awk '{$1=""; print $0}')
 	fi
 
+#Cmd to get the ramsize
 	ramSize=$(echo "$lshwOutput" | grep -A10 "\-memory" | grep 'size:' | awk 'FNR == 2 {$1=""; print $0}')
 	if [ -z "$ramSize" ]; then 
 		ramSize='Error! Data is unavailable.'
@@ -341,6 +408,7 @@ function ramReport() {
 		ramSize=$(echo "$lshwOutput" | grep -A10 "\-memory" | grep 'size:' | awk 'FNR == 2 {$1=""; print $0}')
 	fi
 
+#Cmd to get the ram speed
 	ramSpeed=$(echo "$dmidecodeOutput" --type 17 | grep -m1 Speed | awk '{$1=""; print $0}')
 	if [ -z "$ramSpeed" ]; then 
 		ramSpeed='Error! Data is unavailable.'
@@ -348,6 +416,7 @@ function ramReport() {
 		ramSpeed=$(echo "$dmidecodeOutput" --type 17 | grep -m1 Speed | awk '{$1=""; print $0}')
 	fi
 
+#Cmd to get the ram location
 	ramLocation=$(echo "$lshwOutput" | grep -m1 'slot: RAM' |awk '{$1=""; $2=""; print $0}')
 	if [ -z "$ramLocation" ]; then 
 		ramLocation='Error! Data is unavailable.'
@@ -355,6 +424,7 @@ function ramReport() {
 		ramLocation=$(echo "$lshwOutput" | grep -m1 'slot: RAM' |awk '{$1=""; $2=""; print $0}')
 	fi
 
+#Cmd to get the totalsize
 	totalSize=$(echo "$lshwOutput" | grep -A5 "\-memory" | grep -m1 'size:' | awk '{$1=""; print $0}')
 	if [ -z "$totalSize" ]; then 
 		totalSize='Error! Data is unavailable.'
@@ -362,6 +432,7 @@ function ramReport() {
 		totalSize=$(echo "$lshwOutput" | grep -A5 "\-memory" | grep -m1 'size:' | awk '{$1=""; print $0}')
 	fi
 
+#Cmd to get the ramtable
 	ramTable=$(paste -d ';' <(echo "$ramManufacturer") <(echo "$ramProductName") <(echo "$ramSerialNum") <(echo "$ramSize") <(echo "$ramSpeed") <(echo "$ramLocation") <(echo "$totalSize") | column -N Manufacturer,Model,'Seial Number',Size,Speed,Location,'Total size' -s ';' -o ' | ' -t)	
 
 cat <<EOF
@@ -376,7 +447,10 @@ EOF
 
 ####################### Video Report ##############################
 
-function videoReport() {
+#Create a function for video report
+function videoreport() {
+
+#Cmd to get videomanufacutre
 	videoManu=$(lshw -class display | grep "vendor:" | awk '{print $2}')
 	if [ -z "$videoManu" ]; then 
 		videoManu='Error! Data is unavailable.'
@@ -384,6 +458,7 @@ function videoReport() {
 		videoManu=$(lshw -class display | grep "vendor:" | awk '{print $2}')
 	fi
 
+#Cmd to get the videodescripition
 	videoDescription=$(lshw -C display | grep 'description:' | awk '{$1=""; print $0}')
 	if [ -z "$videoDescription" ]; then 
 		videoDescription='Error! Data is unavailable.'
@@ -406,8 +481,8 @@ EOF
 	
 ############################################## COMPUTER INFORMATION ################################################
 
-
-function cmpReport() {
+#create a report for computer information
+function cmpreport() {
 	#Cmd to get the computer manufacturer.
 	cmpmanuftr=$(echo "$lshwOutput" -class system | grep 'vendor:' | head -1 | awk '{$1=""; print $0}') 
 	if [ -z "$cmpmanuftr" ]; then
@@ -448,7 +523,7 @@ EOF
 
 ####################################### OS INFORMATION ################################################
 
-function osReport() {
+function osreport() {
 	#Cmd to get Os distro version.
 	distroversion=$(hostnamectl | grep 'Kernel: ' | awk '{$1=""; print $0}')
 	if [ -z "$cmpdescription" ]; then 
